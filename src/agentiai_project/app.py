@@ -97,10 +97,23 @@ st.markdown(
     }
 
     [data-testid="stChatInput"] {
-        border: 1px solid #34304f;
-        border-radius: 18px;
-        background: #15182a;
-    }
+    border: 1px solid #34304f;
+    border-radius: 18px;
+    background: #15182a;
+}
+
+    [data-testid="stChatInput"] textarea {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff !important;
+    background: transparent !important;
+}
+
+    [data-testid="stChatInput"] textarea::placeholder {
+    color: #a5aec8 !important;
+    -webkit-text-fill-color: #a5aec8 !important;
+    opacity: 1 !important;
+}
 
     [data-testid="stChatInput"]:focus-within {
         border-color: #a78bfa;
