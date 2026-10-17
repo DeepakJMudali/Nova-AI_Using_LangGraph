@@ -307,7 +307,7 @@ def create_graph():
         max_tokens=4000,
         strategy="last",
         token_counter="approximate",
-        include_system=True,
+        include_system=False,
         allow_partial=False,
         start_on="human",
        )
