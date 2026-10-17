@@ -306,14 +306,17 @@ def create_graph():
         state["messages"],
         max_tokens=4000,
         strategy="last",
-        token_counter=llm,
+        token_counter="approximate",
         include_system=True,
         allow_partial=False,
         start_on="human",
        )
+     
+        if not messages:
+            messages = state["messages"][-1:]
+            
         response = llm_with_tools.invoke(messages)
         return {"messages": [response]}
-
     builder = StateGraph(State)
 
     builder.add_node("chatbot", chatbot)
