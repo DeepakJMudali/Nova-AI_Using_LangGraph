@@ -96,24 +96,38 @@ st.markdown(
         margin-bottom: .9rem;
     }
 
-    [data-testid="stChatInput"] {
-    border: 1px solid #34304f;
-    border-radius: 18px;
-    background: #15182a;
+   
+/* Mobile and desktop chat input */
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] > div {
+    background-color: #15182a !important;
+    border: 1px solid #34304f !important;
+    border-radius: 18px !important;
 }
 
-    [data-testid="stChatInput"] textarea {
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInput"] textarea:focus {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     caret-color: #ffffff !important;
-    background: transparent !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
 }
 
-    [data-testid="stChatInput"] textarea::placeholder {
+[data-testid="stChatInput"] textarea::placeholder {
     color: #a5aec8 !important;
     -webkit-text-fill-color: #a5aec8 !important;
     opacity: 1 !important;
 }
+
+/* Prevent mobile browser autofill from changing text contrast */
+[data-testid="stChatInput"] textarea:-webkit-autofill,
+[data-testid="stChatInput"] textarea:-webkit-autofill:hover,
+[data-testid="stChatInput"] textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 9999s ease-out;
+}
+
 
     [data-testid="stChatInput"]:focus-within {
         border-color: #a78bfa;
