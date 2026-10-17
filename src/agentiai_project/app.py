@@ -13,6 +13,7 @@ from langchain_core.messages import (
     AIMessage,
     ToolMessage,
 )
+from langchain_core.messages import trim_messages
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
@@ -301,7 +302,16 @@ def create_graph():
     llm_with_tools = llm.bind_tools(tools)
 
     def chatbot(state: State):
-        response = llm_with_tools.invoke(state["messages"])
+        messages = trim_messages(
+        state["messages"],
+        max_tokens=4000,
+        strategy="last",
+        token_counter=llm,
+        include_system=True,
+        allow_partial=False,
+        start_on="human",
+       )
+        response = llm_with_tools.invoke(messages)
         return {"messages": [response]}
 
     builder = StateGraph(State)
