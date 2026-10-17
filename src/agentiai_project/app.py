@@ -43,17 +43,20 @@ st.markdown(
         --panel: #14182a;
         --border: #282d45;
         --text: #f0f2ff;
-        --muted: #929bb7;
+        --muted: #a5aec8;
         --accent: #a78bfa;
     }
 
     .stApp {
         background:
-            radial-gradient(ellipse at 50% 0%,
-            rgba(112, 76, 220, .15), transparent 48%),
-            var(--bg);
-        color: var(--text);
-        font-family: 'Inter', sans-serif;
+            radial-gradient(
+                ellipse at 50% 0%,
+                rgba(112, 76, 220, .15),
+                transparent 48%
+            ),
+            var(--bg) !important;
+        color: var(--text) !important;
+        font-family: 'Inter', sans-serif !important;
     }
 
     .block-container {
@@ -62,16 +65,18 @@ st.markdown(
         padding-bottom: 6rem;
     }
 
-    #MainMenu, footer {
+    #MainMenu,
+    footer {
         visibility: hidden;
     }
 
     header[data-testid="stHeader"] {
-        background: transparent;
+        background: transparent !important;
     }
 
+    /* Sidebar */
     section[data-testid="stSidebar"] {
-        background: #0e1120;
+        background: #0e1120 !important;
         border-right: 1px solid var(--border);
     }
 
@@ -79,6 +84,12 @@ st.markdown(
         padding-top: 1.8rem;
     }
 
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] label {
+        color: #dfe3f7 !important;
+    }
+
+    /* Typography */
     h1, h2, h3, p {
         font-family: 'Inter', sans-serif !important;
     }
@@ -88,68 +99,89 @@ st.markdown(
         letter-spacing: -1.3px;
     }
 
+    /* Chat message cards */
     [data-testid="stChatMessage"] {
-        background: rgba(21, 25, 43, .88);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 1rem 1.15rem;
-        margin-bottom: .9rem;
+        background: #14182a !important;
+        border: 1px solid #282d45 !important;
+        border-radius: 18px !important;
+        padding: 1rem 1.15rem !important;
+        margin-bottom: .9rem !important;
+        color: #f0f2ff !important;
+        opacity: 1 !important;
     }
 
-   
-/* Mobile and desktop chat input */
-[data-testid="stChatInput"],
-[data-testid="stChatInput"] > div {
-    background-color: #15182a !important;
-    border: 1px solid #34304f !important;
-    border-radius: 18px !important;
-}
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p,
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li,
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] strong,
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] code {
+        color: #f0f2ff !important;
+        opacity: 1 !important;
+    }
 
-[data-testid="stChatInput"] textarea,
-[data-testid="stChatInput"] textarea:focus {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    caret-color: #ffffff !important;
-    background-color: transparent !important;
-    opacity: 1 !important;
-}
+    /* Chat input container */
+    [data-testid="stChatInput"] {
+        background: #15182a !important;
+        border: 1px solid #34304f !important;
+        border-radius: 18px !important;
+        opacity: 1 !important;
+    }
 
-[data-testid="stChatInput"] textarea::placeholder {
-    color: #a5aec8 !important;
-    -webkit-text-fill-color: #a5aec8 !important;
-    opacity: 1 !important;
-}
+    [data-testid="stChatInput"] > div {
+        background: transparent !important;
+        border-radius: 18px !important;
+    }
 
-/* Prevent mobile browser autofill from changing text contrast */
-[data-testid="stChatInput"] textarea:-webkit-autofill,
-[data-testid="stChatInput"] textarea:-webkit-autofill:hover,
-[data-testid="stChatInput"] textarea:-webkit-autofill:focus {
-    -webkit-text-fill-color: #ffffff !important;
-    transition: background-color 9999s ease-out;
-}
+    /* Typed text: mobile and desktop */
+    [data-testid="stChatInput"] textarea,
+    [data-testid="stChatInput"] textarea:focus {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        caret-color: #ffffff !important;
+        background: transparent !important;
+        opacity: 1 !important;
+        font-size: 16px !important;
+    }
 
+    /* Placeholder */
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #a5aec8 !important;
+        -webkit-text-fill-color: #a5aec8 !important;
+        opacity: 1 !important;
+    }
 
+    /* Input focus effect */
     [data-testid="stChatInput"]:focus-within {
-        border-color: #a78bfa;
-        box-shadow: 0 0 0 2px rgba(167, 139, 250, .12);
+        border-color: #a78bfa !important;
+        box-shadow: 0 0 0 2px rgba(167, 139, 250, .15) !important;
     }
 
+    /* Mobile browser autofill */
+    [data-testid="stChatInput"] textarea:-webkit-autofill,
+    [data-testid="stChatInput"] textarea:-webkit-autofill:hover,
+    [data-testid="stChatInput"] textarea:-webkit-autofill:focus {
+        -webkit-text-fill-color: #ffffff !important;
+        caret-color: #ffffff !important;
+    }
+
+    /* Buttons */
     .stButton > button {
         width: 100%;
         min-height: 43px;
-        background: #171b2e;
-        color: #e7e9ff;
-        border: 1px solid var(--border);
-        border-radius: 12px;
+        background: #171b2e !important;
+        color: #f0f2ff !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 12px !important;
         transition: all .2s ease;
     }
 
     .stButton > button:hover {
-        background: #25203e;
-        border-color: var(--accent);
-        color: white;
+        background: #25203e !important;
+        border-color: var(--accent) !important;
+        color: #ffffff !important;
     }
 
+    /* Welcome hero */
     .hero {
         padding: 2rem;
         margin: 1.1rem 0 1.8rem;
@@ -170,7 +202,7 @@ st.markdown(
     }
 
     .hero-title {
-        color: #f5f3ff;
+        color: #f5f3ff !important;
         font-size: 2.4rem;
         line-height: 1.2;
         font-weight: 800;
@@ -179,17 +211,18 @@ st.markdown(
     }
 
     .hero-subtitle {
-        color: #a5aec8;
+        color: #c0c7df !important;
         font-size: .98rem;
         line-height: 1.8;
     }
 
     .section-caption {
-        color: #9ca5c0;
+        color: #b9c1db !important;
         font-size: .88rem;
         margin-bottom: 1rem;
     }
 
+    /* Sidebar branding */
     .sidebar-brand {
         font-size: 1.5rem;
         font-weight: 800;
@@ -199,25 +232,27 @@ st.markdown(
     }
 
     .sidebar-subtitle {
-        color: #929bb7;
+        color: #b0b8d2;
         font-size: .82rem;
         margin-bottom: 1.5rem;
     }
 
+    /* Status indicator */
     .status {
         display: inline-block;
         padding: 6px 11px;
         border-radius: 20px;
         border: 1px solid rgba(52, 211, 153, .24);
         background: rgba(52, 211, 153, .08);
-        color: #6ee7b7;
+        color: #6ee7b7 !important;
         font-size: .76rem;
     }
 
     hr {
-        border-color: var(--border);
+        border-color: var(--border) !important;
     }
 
+    /* Mobile layout */
     @media (max-width: 640px) {
         .block-container {
             padding: 1rem 1rem 5rem;
@@ -230,11 +265,20 @@ st.markdown(
         .hero-title {
             font-size: 1.8rem;
         }
+
+        .hero-subtitle {
+            font-size: .9rem;
+        }
+
+        [data-testid="stChatMessage"] {
+            padding: .85rem !important;
+        }
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
 
 
 # --------------------------------------------------
