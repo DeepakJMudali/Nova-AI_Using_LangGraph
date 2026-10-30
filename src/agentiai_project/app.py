@@ -12,12 +12,18 @@ from langchain_core.messages import (
     HumanMessage,
     AIMessage,
     ToolMessage,
+    SystemMessage,
 )
 from langchain_core.messages import trim_messages
+from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
+from langchain_community.document_loaders import WebBaseLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 
 load_dotenv()
 
@@ -280,8 +286,24 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+## RAG with history ware retriever
 
+WEBSITE_URLS = [
+    "https://en.wikipedia.org/wiki/Artificial_intelligence",
+    "https://en.wikipedia.org/wiki/Machine_learning"
+]
 
+@st.cache_resource
+def create_vectorDB():
+    document_loader = WebBaseLoader(web_path=WEBSITE_URLS)
+    documents = document_loader.load()
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = splitter.split_documents(documents)
+    embedder=  HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+    vectorStore = Chroma.from_documents(chunks,embedder)
+    return vectorStore
 # --------------------------------------------------
 # LangGraph state
 # --------------------------------------------------
@@ -297,10 +319,56 @@ def create_graph():
     llm = ChatGroq(model="openai/gpt-oss-20b")
 
     search_tool = TavilySearch(max_results=2)
-    tools = [search_tool]
+    
 
+    vectorStore = create_vectorDB()
+    retriever = vectorStore.as_retriever(search_kwargs= {"k": 4})
+
+    ## RAG tool
+    @tool
+    def rag_search(query:str):
+        """ Search Nova AI's indexed website knowledge base for relevant information.
+            Use this tool when the user asks about information that may be contained
+            in the indexed websites. Pass a clear, standalone search query.
+        """
+        documents = retriever.invoke(query)
+
+        if not documents:
+            return (
+                           "No relevant documents were retrieved from the internal "
+                            "knowledge base."
+                        )
+        context_parts=[]
+
+        for index,document in enumerate(documents,start=1):
+            source = document.metadata.get("source", "Unknown source")
+            context_parts.append(f"Document {index}\nSource: {source}\n"
+                                 f"Content: {document.page_content}")
+
+        return "\n\n---\n\n".join(context_parts)
+    
+    tools = [search_tool,rag_search]
+    
     llm_with_tools = llm.bind_tools(tools)
-
+    system_message = SystemMessage(
+            content=(
+                "You are Nova AI, a helpful conversational assistant.\n\n"
+                "You have access to these tools:\n"
+                "1. rag_search: searches the internal ChromaDB knowledge base built "
+                "from the configured websites. Use it for questions about that "
+                "indexed content.\n"
+                "2. tavily_search: searches the live internet. Use it when the user "
+                "asks for current, recent, or live information.\n\n"
+                "Choose the appropriate tool based on the user's question. For a "
+                "general question that does not need retrieval, you may answer "
+                "using your own knowledge. If RAG returns no relevant information, "
+                "say that the indexed knowledge base did not provide an answer and "
+                "answer from general knowledge only when you can do so reliably. "
+                "Do not claim that an answer came from a source unless the tool "
+                "provided that source. Use the conversation history to understand "
+                "follow-up questions."
+            )
+        )
     def chatbot(state: State):
         messages = trim_messages(
         state["messages"],
@@ -315,8 +383,9 @@ def create_graph():
         if not messages:
             messages = state["messages"][-1:]
             
-        response = llm_with_tools.invoke(messages)
+        response = llm_with_tools.invoke([system_message]+messages)
         return {"messages": [response]}
+    
     builder = StateGraph(State)
 
     builder.add_node("chatbot", chatbot)
@@ -380,12 +449,13 @@ with st.sidebar:
 
     st.markdown("### Capabilities")
     st.markdown(
-        """
-        - 💬 Conversational AI
-        - 🔎 Web search with Tavily
-        - 🧠 LangGraph conversation memory
-        """
-    )
+            """
+            - 💬 Conversational AI
+            - 📚 RAG with ChromaDB
+            - 🔎 Live web search with Tavily
+            - 🧠 LangGraph conversation memory
+            """
+        )
 
     st.divider()
     st.caption("Powered by Groq · LangGraph · Tavily")
