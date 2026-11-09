@@ -404,15 +404,15 @@ graph = create_graph()
 # --------------------------------------------------
 # Thread ID: preserved in URL across refreshes
 # --------------------------------------------------
+thread_id = st.query_params.get("thread_id")
 
-
-if not st.query_params.get("thread_id"):
+if not thread_id:
     thread_id = str(uuid.uuid4())
     st.query_params["thread_id"] = thread_id
 
 config = {
     "configurable": {
-        "thread_id":   st.query_params["thread_id"]
+        "thread_id": st.query_params["thread_id"] ,
     }
 }
 
